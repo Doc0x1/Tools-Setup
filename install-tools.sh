@@ -63,6 +63,9 @@ else
     install_rust && wget https://github.com/RustScan/RustScan/releases/download/2.0.1/rustscan_2.0.1_amd64.deb -O rustscan_2.0.1_amd64.deb | sudo dpkg -i ./rustscan_2.0.1_amd64.deb
 fi
 
+# Remove rustscan .deb file if present
+[[ -f "rustscan_2.0.1_amd64.deb "]] && rm -f ./rustscan_2.0.1_amd64.deb
+
 if is_command_installed pip3; then
     pip3 install dirsearch
 elif is_command_installed pip; then
