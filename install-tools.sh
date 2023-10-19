@@ -10,66 +10,84 @@ function is_command_installed(){
     fi
 }
 
+# Function to install Go
 function install_go(){
-    printf "%s\n" "Go is NOT installed. Installing go..."
-    curl -fsSLo https://raw.githubusercontent.com/codenoid/install-latest-go-linux/main/install-go.sh | bash
-    sleep 1
-    printf "\n%s\n" "If using zsh, add the export lines to your ~/.zshrc file, or wherever you put your PATH export for zsh."
-    sleep 4
+    echo "Go is NOT installed. Installing Go..."
+    if curl -sSfLo --url https://raw.githubusercontent.com/codenoid/install-latest-go-linux/main/install-go.sh | bash; then
+        echo "Go installed successfully."
+        sleep 1
+        echo "If using zsh, add the export lines to your ~/.zshrc file, or wherever you put your PATH export for zsh."
+    else
+        echo "Failed to install Go. Exiting."
+        exit 1
+    fi
 }
 
+# Function to install Rust
 function install_rust(){
-    curl --proto '=https' --tlsv1.3 https://sh.rustup.rs -sSf | sh
-    source $HOME/.cargo/env
-    if is_command_installed cargo;  then
-        printf "%s\n" "Rust installed successfully."
+    if curl --proto '=https' --tlsv1.3 https://sh.rustup.rs -sSf | sh && source $HOME/.cargo/env; then
+        echo "Rust installed successfully."
         return 0
     else
+        echo "Failed to install Rust. Exiting."
         return 1
     fi
 }
 
 # ============BEGIN============
 # check if necessary packages are installed
-req_pkgs=(build-essential git wget curl python3 python3-pip seclists nmap)
+if is_command_installed apt-get; then
+    sudo apt-get update -y
 
-if command -v apt-get > /dev/null 2>&1; then
-	sudo apt-get update -y
-	for package in "${req_pkgs[@]}"; do
-		sudo apt-get install $package -y
-	done
+    # Install required packages
+    req_pkgs=(build-essential git wget curl python3 python3-pip seclists nmap)
+    for package in "${req_pkgs[@]}"; do
+        if sudo apt-get install $package -y; then
+            echo "Installed $package successfully."
+        else
+            echo "Failed to install $package. Exiting."
+            exit 1
+        fi
+    done
 else
-	printf "%s\n" "This script is designed for Debian based distros like Kali Linux or Parrot OS."
-    printf "%s\n" "If your distro uses a different package manager from apt, you won't be able to use this script."
-    sleep 5 && exit
+    echo "This script is designed for Debian based distros like Kali Linux or Parrot OS."
+    echo "If your distro uses a different package manager from apt, you won't be able to use this script."
+    exit 1
 fi
 
 # ============CHECK FOR GO INSTALL============
+# Check for Go installation
 if is_command_installed go; then
-    printf "%s\n" "Go is installed. Great."
-    go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
-    go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
-    go install github.com/tomnomnom/assetfinder@latest
-    go install github.com/lc/gau/v2/cmd/gau@latest
+    echo "Go is installed. Great."
 else
     install_go
 fi
 
 # ============CHECK FOR RUST INSTALL============
 if is_command_installed rustc; then
-    wget https://github.com/RustScan/RustScan/releases/download/2.0.1/rustscan_2.0.1_amd64.deb -O rustscan_2.0.1_amd64.deb | sudo dpkg -i ./rustscan_2.0.1_amd64.deb
+    echo "Rust is installed. Great."
 else
-    printf "%s\n" "Rust is't installed. Installing rust..."
-    install_rust && wget https://github.com/RustScan/RustScan/releases/download/2.0.1/rustscan_2.0.1_amd64.deb -O rustscan_2.0.1_amd64.deb | sudo dpkg -i ./rustscan_2.0.1_amd64.deb
+    echo "Rust isn't installed. Installing Rust..."
+    if install_rust; then
+        echo "Rust installed successfully."
+    else
+        echo "Failed to install Rust. Exiting."
+        exit 1
+    fi
 fi
 
 # Remove rustscan .deb file if present
-[[ -f "rustscan_2.0.1_amd64.deb "]] && rm -f ./rustscan_2.0.1_amd64.deb
+[ -f "rustscan_2.0.1_amd64.deb" ] && rm -f ./rustscan_2.0.1_amd64.deb
 
-if is_command_installed pip3; then
-    pip3 install dirsearch
-elif is_command_installed pip; then
-    pip install dirsearch
+# Install Python package
+if is_command_installed pip3 || is_command_installed pip; then
+    if pip3 install dirsearch || pip install dirsearch; then
+        echo "dirsearch installed successfully."
+    else
+        echo "Error installing dirsearch. Make sure python3 and pip are installed correctly."
+        exit 1
+    fi
 else
-    printf "%s\n" "Error installing dirsearch, make sure python3 and pip are installed correctly."
+    echo "pip3 or pip not found. Exiting."
+    exit 1
 fi
