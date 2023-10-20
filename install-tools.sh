@@ -13,7 +13,7 @@ function is_command_installed(){
 # Function to install Go
 function install_go(){
     echo "Go is NOT installed. Installing Go..."
-    if curl -sSfLo --url https://raw.githubusercontent.com/codenoid/install-latest-go-linux/main/install-go.sh | bash; then
+    if curl -sSfL --url https://raw.githubusercontent.com/codenoid/install-latest-go-linux/main/install-go.sh | bash; then
         echo "Go installed successfully."
         sleep 1
         echo "If using zsh, add the export lines to your ~/.zshrc file, or wherever you put your PATH export for zsh."
