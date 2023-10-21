@@ -6,7 +6,7 @@ The installation requires you to have a Debian based distribution, like Kali Lin
 ### Install Methods
   #### One method you can use is to clone this repo, and then run the install script.
 ```
-  git clone https://github.com/Doc0x1/Tools-Setup/tree/master && cd ./Tools-Setup && bash ./install-tools.sh
+  git clone https://github.com/Doc0x1/Tools-Setup.git && cd ./Tools-Setup && bash ./install-tools.sh
 ```
   ##### (I think it works? Could use some testers, if it doesn't work just lemme know thanks <3)
 
