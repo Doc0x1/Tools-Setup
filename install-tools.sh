@@ -40,7 +40,7 @@ if is_command_installed apt-get; then
     sudo apt-get update -y
 
     # Install required packages
-    req_pkgs=(build-essential git wget curl python3 python3-pip seclists nmap)
+    req_pkgs=(build-essential git wget curl python3 python3-pip nmap)
     for package in "${req_pkgs[@]}"; do
         if sudo apt-get install $package -y; then
             echo "Installed $package successfully."
