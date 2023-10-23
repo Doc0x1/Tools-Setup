@@ -76,8 +76,11 @@ else
     fi
 fi
 
-# Remove rustscan .deb file if present
-[ -f "rustscan_2.0.1_amd64.deb" ] && rm -f ./rustscan_2.0.1_amd64.deb
+if is_command_installed rustscan; then
+    echo "rustscan is installed. Great."
+else
+    cargo install rustscan
+fi
 
 # Install Python package
 if is_command_installed pip3 || is_command_installed pip; then
