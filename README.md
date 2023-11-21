@@ -15,9 +15,5 @@ The installation requires you to have a Debian based distribution, like Kali Lin
   curl -fsSL https://raw.githubusercontent.com/Doc0x1/Tools-Setup/master/install-tools.sh | bash -s -
 ```
 
-### For anyone having issues
-If you have issues with any of the install methods or the script itself, feel free to open up an issue on this repo or find me here:
-- [Owlsec Discord.gg Link](https://discord.gg/owlsec)
-
 ## Happy Pentesting!
 Now quit playing video games and go learn how to use some of these tools.
